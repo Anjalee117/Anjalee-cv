@@ -289,3 +289,53 @@ export async function saveResume(_previous: { error?: string; success?: string }
 export async function saveProjectImage(id: string, _previous: { error?: string; success?: string }, formData: FormData) {
   return uploadFeedback(() => uploadProjectImage(id, formData));
 }
+
+// Experience photos live inside the existing section JSON; no schema changes.
+async function getExperienceItem(sectionId: string, index: number, title: string) {
+  const supabase = await requireUser();
+  const { data } = await checked(supabase.from("sections").select("title,content").eq("id", sectionId).single());
+  const section = data as { title: string; content: import("@/lib/types").Section["content"] };
+  if (!section.title.toLowerCase().includes("experience") || !Number.isInteger(index) || index < 0) throw new ValidationError("Invalid experience.");
+  const item = section.content.items?.[index];
+  if (!item || item.title !== title) throw new ValidationError("This experience has changed. Refresh the page and try again.");
+  return { supabase, content: section.content, item };
+}
+
+export async function addExperiencePhoto(sectionId: string, index: number, title: string, formData: FormData) {
+  return uploadFeedback(async () => {
+    const { supabase, content, item } = await getExperienceItem(sectionId, index, title);
+    if ((item.photos?.length ?? 0) >= 12) throw new ValidationError("Maximum 12 photos per experience.");
+    const file = formData.get("file");
+    if (!(file instanceof File)) throw new ValidationError("Select an image.");
+    assertValidImage(file);
+    const extension = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif" }[file.type];
+    const path = `experiences/${sectionId}/${crypto.randomUUID()}.${extension}`;
+    await checked(supabase.storage.from("media").upload(path, file));
+    const { data } = supabase.storage.from("media").getPublicUrl(path);
+    const items = [...content.items!];
+    items[index] = { ...item, photos: [...(item.photos ?? []), { url: data.publicUrl, path }] };
+    try {
+      await checked(supabase.from("sections").update({ content: { ...content, items } }).eq("id", sectionId).eq("content", JSON.stringify(content)).select("id").single());
+    } catch {
+      await supabase.storage.from("media").remove([path]);
+      throw new ValidationError("Another edit changed this experience. Refresh and try again.");
+    }
+    updateTag("portfolio");
+    revalidatePath("/experience");
+    revalidatePath("/admin/sections");
+  });
+}
+
+export async function removeExperiencePhoto(sectionId: string, index: number, title: string, path: string) {
+  return uploadFeedback(async () => {
+    const { supabase, content, item } = await getExperienceItem(sectionId, index, title);
+    if (!path.startsWith(`experiences/${sectionId}/`) || !item.photos?.some(photo => photo.path === path)) throw new ValidationError("Photo not found.");
+    const items = [...content.items!];
+    items[index] = { ...item, photos: item.photos.filter(photo => photo.path !== path) };
+    await checked(supabase.from("sections").update({ content: { ...content, items } }).eq("id", sectionId).eq("content", JSON.stringify(content)).select("id").single());
+    await supabase.storage.from("media").remove([path]);
+    updateTag("portfolio");
+    revalidatePath("/experience");
+    revalidatePath("/admin/sections");
+  });
+}

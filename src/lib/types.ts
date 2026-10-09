@@ -1,3 +1,6 @@
+export type ExperiencePhoto = { url: string; path: string };
+export type SectionItem = { title: string; body: string; tag?: string; photos?: ExperiencePhoto[] };
+
 export type Profile = {
   id: number;
   name: string;
@@ -20,7 +23,7 @@ export type Section = {
   layout: SectionLayout;
   content: {
     body?: string;
-    items?: { title: string; body: string; tag?: string }[];
+    items?: SectionItem[];
     tags?: string[]; // used by the "tags" layout (e.g. a Skills chip grid)
   };
   position: number;

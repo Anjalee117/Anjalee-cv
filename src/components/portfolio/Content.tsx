@@ -1,8 +1,9 @@
+import ExperienceGallery from "@/components/ExperienceGallery";
 import { projectTechStack } from "@/lib/projectStacks";
 import { skillIconUrl } from "@/lib/skillIcons";
 import type { Section, Project } from "@/lib/types";
 
-export function SectionContent({ section: s }: { section: Section }) {
+export function SectionContent({ section: s, showExperiencePhotos = false }: { section: Section; showExperiencePhotos?: boolean }) {
   if (s.layout === "text") return <p className="section-body">{s.content.body}</p>;
   if (s.layout === "tags") return <div className="skills-grid">{(s.content.tags ?? []).map((tag, i) => {
     const icon = skillIconUrl(tag);
@@ -14,6 +15,7 @@ export function SectionContent({ section: s }: { section: Section }) {
   return <div className={`content-grid ${s.title.toLowerCase() === "experience" ? "experience-grid" : ""}`}>{(s.content.items ?? []).map((item, i) => <article className="content-card" key={i}>
     {item.tag && <p className="card-meta">{item.tag}</p>}
     <h3>{item.title}</h3><p>{item.body}</p>
+    {showExperiencePhotos && item.photos?.length ? <ExperienceGallery photos={item.photos} title={item.title} /> : null}
   </article>)}</div>;
 }
 

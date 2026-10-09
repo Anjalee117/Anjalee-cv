@@ -1,3 +1,4 @@
+import type { SectionItem } from "@/lib/types";
 // Server-side input validation. Every admin Server Action runs its inputs through
 // these before writing to the database — the client-side `accept`/`maxLength`
 // attributes on forms are a UX nicety, not security; a request can always be sent
@@ -71,7 +72,7 @@ export function assertValidHexColor(value: FormDataEntryValue | null, fallback: 
  * layouts) so a malformed or oversized JSON payload can't corrupt the public
  * page's rendering or balloon the database row.
  */
-export function assertValidSectionItems(raw: string): { title: string; body: string; tag?: string }[] {
+export function assertValidSectionItems(raw: string): SectionItem[] {
   let parsed: unknown;
   try {
     parsed = JSON.parse(raw);
@@ -93,6 +94,14 @@ export function assertValidSectionItems(raw: string): { title: string; body: str
       title: o.title.trim().slice(0, 120),
       body: typeof o.body === "string" ? o.body.trim().slice(0, 2000) : "",
       ...(typeof o.tag === "string" && o.tag.trim() ? { tag: o.tag.trim().slice(0, 60) } : {}),
+      ...(Array.isArray(o.photos) ? { photos: o.photos.slice(0, 12).map((photo: unknown) => {
+        if (!photo || typeof photo !== "object") throw new ValidationError("Invalid event photo.");
+        const { url, path } = photo as Record<string, unknown>;
+        if (typeof url !== "string" || typeof path !== "string" || !path.startsWith("experiences/")) throw new ValidationError("Invalid event photo.");
+        const validUrl = assertValidUrlOrEmpty(url, "Event photo URL");
+        if (!validUrl) throw new ValidationError("Event photo URL is required.");
+        return { url: validUrl, path: path.slice(0, 500) };
+      }) } : {}),
     };
   });
 }

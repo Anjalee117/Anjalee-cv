@@ -12,7 +12,6 @@ export function SiteHeader({ sections }: { sections: Section[] }) {
     <Link href="/" className="wordmark">Anjalee<span>.</span></Link>
     <nav aria-label="Main navigation" className="desktop-nav"><Navigation sections={sections} /></nav>
     <ThemeToggle />
-    <details className="mobile-nav"><summary>Menu +</summary><nav aria-label="Mobile navigation"><Navigation sections={sections} /></nav></details>
   </header>;
 }
 export function SiteFooter({ profile, sections }: { profile: Profile | null; sections: Section[] }) {

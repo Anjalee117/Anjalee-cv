@@ -26,7 +26,7 @@ export default async function SectionPage({ params }: Props) {
     <main id="content" className="portfolio-section" style={{ borderColor: "var(--border)", minHeight: "55vh" }}>
       <Link href="/" className="text-xs">← BACK HOME</Link>
       <h1 className="font-display text-4xl sm:text-5xl font-semibold mt-6 mb-10">{title}<span style={{ color: "var(--accent)" }}>.</span></h1>
-      {section && <SectionContent section={section} />}
+      {section && <SectionContent section={section} showExperiencePhotos={slug === "experience"} />}
       {slug === "projects" && <ProjectContent projects={projects} />}
       {slug === "about" && <div className="hero-layout"><div><h2 className="font-display text-2xl mb-5">{displayName(profile.name)}</h2><p style={{ color: "var(--muted)" }}>{profile.bio}</p><div className="flex flex-wrap gap-2 mt-6">{profile.roles.map(role => <span key={role} className="tag">{role}</span>)}</div></div>{profile.profile_pic_url && <div className="portrait-frame">
         {/* eslint-disable-next-line @next/next/no-img-element */}
