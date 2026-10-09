@@ -140,7 +140,13 @@ export async function updateSection(id: string, formData: FormData) {
   } else if (layout === "tags") {
     content = { tags: cleanList(formData.get("tags_text"), 40, 40) };
   } else {
-    content = { items: assertValidSectionItems(String(formData.get("items_json") || "[]")) };
+    if (formData.has("items_json")) {
+      content = { items: assertValidSectionItems(String(formData.get("items_json") || "[]")) };
+    } else {
+      const { data } = await checked(supabase.from("sections").select("content").eq("id", id).single());
+      if (!data) throw new ValidationError("Section not found.");
+      content = data.content;
+    }
   }
 
   await checked(supabase.from("sections").update({ title, layout, content }).eq("id", id));
@@ -335,6 +341,41 @@ export async function removeExperiencePhoto(sectionId: string, index: number, ti
     await checked(supabase.from("sections").update({ content: { ...content, items } }).eq("id", sectionId).eq("content", JSON.stringify(content)).select("id").single());
     await supabase.storage.from("media").remove([path]);
     updateTag("portfolio");
+    revalidatePath("/experience");
+    revalidatePath("/admin/sections");
+  });
+}
+
+
+export async function saveExperienceDetails(sectionId: string, index: number, originalTitle: string, formData: FormData) {
+  return uploadFeedback(async () => {
+    const { supabase, content, item } = await getExperienceItem(sectionId, index, originalTitle);
+    const title = cleanText(formData.get("title"), 120);
+    if (!title) throw new ValidationError("Experience title is required.");
+    const items = [...content.items!];
+    items[index] = { ...item, title, body: cleanText(formData.get("body"), 2000), tag: cleanText(formData.get("tag"), 60) };
+    await checked(supabase.from("sections").update({ content: { ...content, items } }).eq("id", sectionId).eq("content", JSON.stringify(content)).select("id").single());
+    updateTag("portfolio");
+    revalidatePath("/");
+    revalidatePath("/experience");
+    revalidatePath("/admin/sections");
+  });
+}
+
+export async function addExperienceDetails(sectionId: string, formData: FormData) {
+  return uploadFeedback(async () => {
+    const supabase = await requireUser();
+    const { data } = await checked(supabase.from("sections").select("title,content").eq("id", sectionId).single());
+    if (!data) throw new ValidationError("Section not found.");
+    if (!data.title.toLowerCase().includes("experience")) throw new ValidationError("Invalid experience section.");
+    const content = data.content as import("@/lib/types").Section["content"];
+    const title = cleanText(formData.get("title"), 120);
+    if (!title) throw new ValidationError("Experience title is required.");
+    if ((content.items?.length ?? 0) >= 24) throw new ValidationError("Maximum 24 experiences.");
+    const items = [...(content.items ?? []), { title, body: cleanText(formData.get("body"), 2000), tag: cleanText(formData.get("tag"), 60), photos: [] }];
+    await checked(supabase.from("sections").update({ content: { ...content, items } }).eq("id", sectionId).eq("content", JSON.stringify(content)).select("id").single());
+    updateTag("portfolio");
+    revalidatePath("/");
     revalidatePath("/experience");
     revalidatePath("/admin/sections");
   });

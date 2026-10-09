@@ -1,3 +1,4 @@
+import AddExperienceForm from "@/components/AddExperienceForm";
 import ExperiencePhotoEditor from "@/components/ExperiencePhotoEditor";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -65,14 +66,14 @@ export default async function SectionsPage() {
             {s.layout === "tags" && (
               <input name="tags_text" defaultValue={(s.content.tags ?? []).join(", ")} placeholder="Python, React, Figma, ..." className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />
             )}
-            {(s.layout === "cards" || s.layout === "two-col") && (
+            {(s.layout === "cards" || s.layout === "two-col") && !s.title.toLowerCase().includes("experience") && (
               <textarea key={JSON.stringify(s.content.items)} name="items_json" defaultValue={JSON.stringify(s.content.items ?? [], null, 2)} rows={6} className="w-full border-2 border-neutral-900 px-3 py-2 text-xs font-mono" />
             )}
             <button className="bg-neutral-900 text-white px-4 py-2 text-sm font-semibold">Save</button>
           </form>
           {s.title.toLowerCase().includes("experience") && (s.layout === "cards" || s.layout === "two-col") && <div className="space-y-4 pt-4">
-            <h2 className="font-semibold">Event photo galleries</h2>
-            <p className="text-xs text-neutral-500">Save text changes before adding photos. Galleries are shown only on Full Experience.</p>
+            <h2 className="font-semibold">Experiences</h2>
+            <AddExperienceForm sectionId={s.id} />
             {(s.content.items ?? []).map((item, index) => <ExperiencePhotoEditor key={`${item.title}-${index}`} sectionId={s.id} index={index} item={item} />)}
           </div>}
         </section>

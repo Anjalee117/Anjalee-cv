@@ -1,13 +1,19 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { addExperiencePhoto, removeExperiencePhoto } from "@/app/admin/actions";
+import { addExperiencePhoto, removeExperiencePhoto, saveExperienceDetails } from "@/app/admin/actions";
 import type { SectionItem } from "@/lib/types";
 
 export default function ExperiencePhotoEditor({ sectionId, index, item }: { sectionId: string; index: number; item: SectionItem }) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const router = useRouter();
+  async function save(data: FormData) {
+    setBusy(true);
+    try { const result = await saveExperienceDetails(sectionId, index, item.title, data); setMessage(result.error ?? "Experience details saved."); }
+    catch { setMessage("Could not save details. Please refresh and try again."); }
+    finally { setBusy(false); router.refresh(); }
+  }
   async function upload(data: FormData) {
     const files = data.getAll("photos").filter((file): file is File => file instanceof File && file.size > 0);
     if (!files.length) return;
@@ -35,6 +41,15 @@ export default function ExperiencePhotoEditor({ sectionId, index, item }: { sect
   }
   return <div className="border border-neutral-300 p-4 space-y-3">
     <h3 className="font-semibold text-sm">{item.title}</h3>
+    <form action={save} className="space-y-3">
+      <fieldset disabled={busy} className="space-y-3">
+        <label className="block text-xs font-semibold">Experience / event title<input name="title" required maxLength={120} defaultValue={item.title} className="block w-full border border-neutral-900 px-3 py-2 text-sm mt-1 font-normal" /></label>
+        <label className="block text-xs font-semibold">Dates / role label<input name="tag" maxLength={60} defaultValue={item.tag ?? ""} className="block w-full border border-neutral-900 px-3 py-2 text-sm mt-1 font-normal" /></label>
+        <label className="block text-xs font-semibold">Description<textarea name="body" maxLength={2000} rows={4} defaultValue={item.body} className="block w-full border border-neutral-900 px-3 py-2 text-sm mt-1 font-normal" /></label>
+        <button className="bg-neutral-900 text-white px-3 py-2 text-xs disabled:opacity-50">{busy ? "Working…" : "Save experience"}</button>
+      </fieldset>
+    </form>
+    <div className="border-t border-neutral-300 pt-3"><h4 className="text-xs font-semibold">Photos for this experience</h4></div>
     <div className="flex flex-wrap gap-3">{(item.photos ?? []).map((photo, i) => <div key={photo.path}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={photo.url} alt={`${item.title} photo ${i + 1}`} width={120} height={80} className="h-20 w-30 object-cover border" />
