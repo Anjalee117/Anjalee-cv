@@ -46,8 +46,8 @@ insert into sections (title, layout, content, position, visible) values
 delete from projects;
 
 insert into projects (title, description, tech_stack, link_url, position, visible) values
-('Taj Finance', 'Personal finance dashboard — designed for income, expense, and budgeting insights, delivering an intuitive experience with real-time analytics and visualization.', array[]::text[], null, 0, true),
-('Jeevandhara', 'AI-powered agriculture dashboard for farmers — farm overview, agricultural insights, and modular service architecture, built with interactive workflows and mock data to demonstrate future capabilities across Kannada Voice AI, crop health, schemes, market intelligence, weather, and IoT modules.', array[]::text[], null, 1, true),
+('Taj Finance', 'Personal finance dashboard — designed for income, expense, and budgeting insights, delivering an intuitive experience with real-time analytics and visualization.', array['React','JavaScript','Vite','Tailwind CSS','Recharts'], null, 0, true),
+('Jeevandhara', 'AI-powered agriculture dashboard for farmers — farm overview, agricultural insights, and modular service architecture, built with interactive workflows and mock data to demonstrate future capabilities across Kannada Voice AI, crop health, schemes, market intelligence, weather, and IoT modules.', array['Next.js','React','TypeScript','Tailwind CSS'], null, 1, true),
 ('Sign Language Live', 'Webcam-based application recognizing static sign-language alphabet poses, achieving 84.2% test accuracy. Confidence thresholds and consecutive-frame stability checks give reliable letter capture, sentence building, and text-to-speech output — deployed as a responsive browser app with on-device camera processing and background inference, validated with 58 automated tests.', array['Python','TensorFlow','MediaPipe'], null, 2, true);
 
 commit;

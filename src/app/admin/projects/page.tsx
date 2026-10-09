@@ -1,3 +1,4 @@
+import { projectTechStack } from "@/lib/projectStacks";
 import UploadForm from "@/components/UploadForm";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -59,7 +60,7 @@ export default async function ProjectsPage() {
           <form action={updateProject.bind(null, proj.id)} className="space-y-2">
             <input name="title" defaultValue={proj.title} className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />
             <textarea name="description" defaultValue={proj.description} rows={2} className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />
-            <input name="tech_stack" defaultValue={proj.tech_stack?.join(", ")} className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />
+            <input name="tech_stack" defaultValue={projectTechStack(proj).join(", ")} className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />
             <label className="block text-xs font-semibold text-neutral-500">Project destination URL</label>
             <p className="text-xs text-neutral-500">Clicking this project card opens this URL. Leave blank if the project is not live yet.</p>
             <input name="link_url" placeholder="https://your-project.com" defaultValue={proj.link_url ?? ""} className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />

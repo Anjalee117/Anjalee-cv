@@ -1,3 +1,4 @@
+import { projectTechStack } from "@/lib/projectStacks";
 import { skillIconUrl } from "@/lib/skillIcons";
 import type { Section, Project } from "@/lib/types";
 
@@ -26,7 +27,7 @@ export function ProjectContent({ projects }: { projects: Project[] }) {
       ) : <><span className="project-index">PROJECT {String(i + 1).padStart(2, "0")}</span><svg className="project-placeholder-icon" viewBox="0 0 64 48" width="80" height="60" fill="none" aria-hidden="true"><rect x="2" y="2" width="60" height="44" rx="3" stroke="currentColor" strokeWidth="2"/><circle cx="44" cy="14" r="5" stroke="currentColor" strokeWidth="2"/><path d="M3 39 20 22l13 13 8-8 21 18" stroke="currentColor" strokeWidth="2"/></svg><span className="project-visual-title">{project.title}</span></>}
     </div>
     <div className="project-info"><h3>{project.title}</h3><p>{project.description}</p>
-      <div className="project-tags">{project.tech_stack.map(tech => <span key={tech}>{tech}</span>)}</div>
+      <div className="project-tags">{projectTechStack(project).map(tech => <span key={tech}>{tech}</span>)}</div>
       {(project.link_url || project.repo_url) && <div className="project-links">{project.link_url && <a href={project.link_url}>Open project ↗</a>}{project.repo_url && <a href={project.repo_url} target="_blank" rel="noopener noreferrer">Source code ↗</a>}</div>}
     </div>
   </article>)}</div>;
