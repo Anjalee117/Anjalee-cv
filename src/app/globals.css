@@ -103,3 +103,8 @@ body::before { content:''; position:fixed; inset:0; z-index:0; pointer-events:no
 .loading-bar { height:14px; background:var(--soft); width:60%; margin-top:20px; }
 
 .project-placeholder-icon { align-self:center; opacity:.45; }
+
+.project-card-linked { position:relative; }
+.project-card-destination { position:absolute; inset:0; z-index:1; }
+.project-card-linked .project-links { position:relative; z-index:2; }
+.project-card-destination:focus-visible { outline:3px solid var(--accent); outline-offset:-4px; }

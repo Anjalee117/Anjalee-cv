@@ -19,7 +19,7 @@ const loadPortfolio = unstable_cache(async () => {
     client.from("projects").select("*").eq("visible", true).order("position"),
   ]);
   if (profile.error || sections.error || projects.error) throw new Error("Portfolio content could not be loaded.");
-  return { profile: profile.data as Profile, sections: sections.data as Section[], projects: projects.data as Project[] };
-}, ["public-portfolio-v1"], { tags: ["portfolio"], revalidate: 60 });
+  return { profile: profile.data as Profile, sections: (sections.data as Section[]).filter(section => section.title.trim().toLowerCase() !== "education"), projects: projects.data as Project[] };
+}, ["public-portfolio-v2"], { tags: ["portfolio"], revalidate: 60 });
 
 export const getPortfolio = cache(loadPortfolio);

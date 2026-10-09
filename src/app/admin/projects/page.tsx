@@ -26,7 +26,7 @@ export default async function ProjectsPage() {
           <input name="title" placeholder="Project title" required className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />
           <textarea name="description" placeholder="One or two sentences on the outcome" rows={2} className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />
           <input name="tech_stack" placeholder="Tech stack, comma separated (e.g. Python, ML, A/B testing)" className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />
-          <input name="link_url" placeholder="Website URL — live demo / deployed app (optional)" className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />
+          <input name="link_url" placeholder="Project destination URL — opens when visitors click the card" className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />
           <input name="repo_url" placeholder="Repository URL — source code (optional)" className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />
           <button className="bg-neutral-900 text-white px-5 py-2 text-sm font-semibold">Add project</button>
         </form>
@@ -60,8 +60,9 @@ export default async function ProjectsPage() {
             <input name="title" defaultValue={proj.title} className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />
             <textarea name="description" defaultValue={proj.description} rows={2} className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />
             <input name="tech_stack" defaultValue={proj.tech_stack?.join(", ")} className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />
-            <label className="block text-xs font-semibold text-neutral-500">Website URL</label>
-            <input name="link_url" defaultValue={proj.link_url ?? ""} className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />
+            <label className="block text-xs font-semibold text-neutral-500">Project destination URL</label>
+            <p className="text-xs text-neutral-500">Clicking this project card opens this URL. Leave blank if the project is not live yet.</p>
+            <input name="link_url" placeholder="https://your-project.com" defaultValue={proj.link_url ?? ""} className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />
             <label className="block text-xs font-semibold text-neutral-500">Repository URL</label>
             <input name="repo_url" defaultValue={proj.repo_url ?? ""} className="w-full border-2 border-neutral-900 px-3 py-2 text-sm" />
             <button className="bg-neutral-900 text-white px-4 py-2 text-sm font-semibold">Save</button>

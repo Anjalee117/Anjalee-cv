@@ -17,7 +17,8 @@ export function SectionContent({ section: s }: { section: Section }) {
 }
 
 export function ProjectContent({ projects }: { projects: Project[] }) {
-  return <div className="project-grid">{projects.map((project, i) => <article key={project.id} className="project-card">
+  return <div className="project-grid">{projects.map((project, i) => <article key={project.id} className={`project-card ${project.link_url ? "project-card-linked" : ""}`}>
+    {project.link_url && <a className="project-card-destination" href={project.link_url} aria-label={`Open ${project.title}`} />}
     <div className={`project-visual project-tone-${i % 3}`}>
       {project.image_url ? (
         // eslint-disable-next-line @next/next/no-img-element
@@ -26,7 +27,7 @@ export function ProjectContent({ projects }: { projects: Project[] }) {
     </div>
     <div className="project-info"><h3>{project.title}</h3><p>{project.description}</p>
       <div className="project-tags">{project.tech_stack.map(tech => <span key={tech}>{tech}</span>)}</div>
-      {(project.link_url || project.repo_url) && <div className="project-links">{project.link_url && <a href={project.link_url} target="_blank" rel="noopener noreferrer">Live project ↗</a>}{project.repo_url && <a href={project.repo_url} target="_blank" rel="noopener noreferrer">Source code ↗</a>}</div>}
+      {(project.link_url || project.repo_url) && <div className="project-links">{project.link_url && <a href={project.link_url}>Open project ↗</a>}{project.repo_url && <a href={project.repo_url} target="_blank" rel="noopener noreferrer">Source code ↗</a>}</div>}
     </div>
   </article>)}</div>;
 }
