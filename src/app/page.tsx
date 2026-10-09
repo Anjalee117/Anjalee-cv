@@ -28,11 +28,7 @@ export default async function Home() {
             <h1 className="hero-title">Hi, I&apos;m <span>{displayName(p.name)}.</span><br />I turn ideas into<br />useful experiences.</h1>
             <p className="hero-description">{p.bio ? p.bio.split(/(?<=\.)\s+/).slice(0, 2).join(" ") : "Aspiring product manager and web developer, combining technical understanding with a focus on people."}</p>
             <div className="hero-roles">{p.roles.map(role => <span key={role}>{role}</span>)}</div>
-            <div className="hero-actions">
-              <a className="btn primary" href="#work">Explore my work <span aria-hidden>↗</span></a>
-              {p.resume_url ? <a className="btn" href={p.resume_url} target="_blank" rel="noopener noreferrer">Download resume ↓</a> : <Link className="btn" href="/about">More about me →</Link>}
-            </div>
-            <a className="hero-email" href="mailto:anjaleemalhotra305@gmail.com">anjalee@dev.com <span aria-hidden>↗</span></a>
+            <div className="hero-actions"><a className="btn primary" href="#work">EXPLORE MY WORK <span aria-hidden="true">→</span></a></div>
           </div>
           <figure className="hero-portrait">
             <div className="portrait-frame">
